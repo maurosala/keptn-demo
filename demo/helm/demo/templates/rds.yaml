@@ -1,0 +1,49 @@
+{{- if .Values.image }}
+  ---
+{{- end }}
+apiVersion: database.aws.crossplane.io/v1beta1
+kind: RDSInstance
+metadata:
+  name: {{ .Values.keptn.project }}-{{ .Values.keptn.stage }}
+  namespace: {{ .Values.keptn.project }}-{{ .Values.keptn.stage }}
+  labels:
+    app: demo
+    app.kubernetes.io/name: {{ .Values.keptn.service }}
+    app.kubernetes.io/instance: "{{ .Values.keptn.service }}-{{ .Values.keptn.deployment }}"
+    app.kubernetes.io/component: api
+    app.kubernetes.io/part-of: "{{ .Values.keptn.project }}"
+    app.kubernetes.io/managed-by: Keptn
+    app.kubernetes.io/version: {{ (split ":" .Values.image)._1 | default "latest" }}
+spec:
+  forProvider:
+    region: eu-central-1
+    allocatedStorage: 10
+    autoMinorVersionUpgrade: true
+    backupRetentionPeriod: 0
+    caCertificateIdentifier: rds-ca-2019
+    copyTagsToSnapshot: false
+    dbInstanceClass: db.t2.micro
+    deletionProtection: false
+    enableIAMDatabaseAuthentication: false
+    enablePerformanceInsights: false
+    engine: mariadb
+    dbName: keptndb
+    engineVersion: '10.4.13'
+    licenseModel: general-public-license
+    masterUsername: 'root'
+    masterPasswordSecretRef:
+      key: password
+      name: rdsmariadbql-conn
+      namespace: {{ .Values.keptn.project }}-{{ .Values.keptn.stage }}
+    multiAZ: false
+    skipFinalSnapshotBeforeDeletion: true
+    port: 3306
+    publiclyAccessible: true
+    storageEncrypted: false
+    storageType: standard
+    dbSubnetGroupName: default-vpc-0f75872a0d43d79ed
+    vpcSecurityGroupIds:
+      - sg-0a89249fcb7661906
+  writeConnectionSecretToRef:
+    name: rdsmariadbql-conn
+    namespace: {{ .Values.keptn.project }}-{{ .Values.keptn.stage }}
