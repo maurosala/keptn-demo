@@ -13,6 +13,8 @@ metadata:
   annotations:
     github.com/project-slug: maurosala/keptn-demo
     backstage.io/techdocs-ref: dir:.
+    keptn.sh/service: demo
+    keptn.sh/project: krateo
 spec:
   type: service
   lifecycle: experimental
